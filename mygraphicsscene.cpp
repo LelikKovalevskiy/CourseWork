@@ -29,6 +29,7 @@ void MyGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     {
         removeItem(tmpGraphicsItem);
         tmpGraphicsItem=addEllipse(QRectF(tmpPoint,QSizeF(event->scenePos().x()-tmpPoint.x(),event->scenePos().y()-tmpPoint.y())));
+        update();
     }
 }
 
