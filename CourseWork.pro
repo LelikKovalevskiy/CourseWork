@@ -1,20 +1,22 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2014-04-28T14:26:01
+# Project created by QtCreator 2014-04-10T22:46:56
 #
 #-------------------------------------------------
 
 QT       += core gui
-QT       += svg
-QT       += xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = Cource
+TARGET = CourseWork
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    mygraphicsscene.cpp \
+    myellipse.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    mygraphicsscene.h \
+    myellipse.h

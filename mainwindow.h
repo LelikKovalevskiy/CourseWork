@@ -2,34 +2,18 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QGraphicsView>
-#include <QLayout>
-#include <QMenu>
-#include <QAction>
-#include <QToolBar>
-#include <QMenuBar>
-#include <QDomDocument>
-#include <QFile>
-#include <QFileDialog>
-#include <QDebug>
-
+#include <QtWidgets>
+#include "mygraphicsscene.h"
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+private:
+    MyGraphicsScene* mainScene;
+    QGraphicsView * view;
 
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    QVBoxLayout *centralVLayout;
-    QHBoxLayout *centralHLayout;
-    QGraphicsView* view;
-    QGraphicsScene* scene;
-    QWidget *box;
-    QDomDocument *domDoc;
-private:
-    void traverseNode(const QDomNode& node);
-private slots:
-    void openFile();
 };
 
 #endif // MAINWINDOW_H
