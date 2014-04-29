@@ -16,6 +16,7 @@
 #include <QSvgRenderer>
 #include <QByteArray>
 #include <QGraphicsSvgItem>
+#include "myview.h"
 
 class MainWindow : public QMainWindow
 {
@@ -24,13 +25,17 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+private:
     QVBoxLayout *centralVLayout;
     QHBoxLayout *centralHLayout;
-    QGraphicsView* view;
+    myView* view;
     QGraphicsScene* scene;
     QWidget *box;
     QDomDocument *domDoc;
-private:
+    QByteArray *bArray;
+    QBuffer *bufferFile;
+    QSvgRenderer *renderer;
+
     int traverseNode(const QDomNode& node);
 private slots:
     void openFile();

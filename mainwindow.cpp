@@ -7,11 +7,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     scene=new QGraphicsScene();
     scene->setSceneRect(0,0,700,700);
-    view=new QGraphicsView(scene);
+    view=new myView(scene);
     centralHLayout=new QHBoxLayout;
     centralVLayout=new QVBoxLayout;
 
-    centralHLayout->addStretch();
+   /* centralHLayout->addStretch();
     centralHLayout->addWidget(view);
     centralHLayout->addStretch();
 
@@ -20,8 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
     centralVLayout->addStretch();
 
     box=new QWidget;
-    box->setLayout(centralVLayout);
-    setCentralWidget(box);
+    box->setLayout(centralVLayout);*/
+    setCentralWidget(view); //!!!
 
     QAction* pactNew = new QAction("New File", 0);
     pactNew->setText("&New");
@@ -72,18 +72,23 @@ void MainWindow::openFile()
         scene->setSceneRect(0,0,height,width);
         int counter=traverseNode(domElement);
 
-        QByteArray *bArray=new QByteArray;
-        *bArray=domDoc->toByteArray();
-        QBuffer *bufferFile=new QBuffer(bArray);
-        QSvgRenderer *renderer=new QSvgRenderer(*bArray);
+        //view->setMaximumSize(height,width);
+
+        bArray=new QByteArray(domDoc->toByteArray());
+        bufferFile=new QBuffer(bArray);
+        renderer=new QSvgRenderer(*bArray);
         for(int i=0;i<counter;++i)
         {
-            qDebug()<<renderer->elementExists(QString::number(i));
             QGraphicsSvgItem *tmp=new QGraphicsSvgItem;
             tmp->setSharedRenderer(renderer);
             tmp->setElementId(QString::number(i));
             scene->addItem(tmp);
+            qDebug()<<tmp->scenePos();
+            tmp->setFlag(QGraphicsSvgItem::ItemIsMovable);
+            tmp->setFlag(QGraphicsSvgItem::ItemIsSelectable);
+            tmp->setFlag(QGraphicsSvgItem::ItemIsFocusable);
         }
+        qDebug()<<renderer->viewBox();
     }
 }
 int MainWindow::traverseNode(const QDomNode& node)
@@ -96,7 +101,8 @@ int MainWindow::traverseNode(const QDomNode& node)
             QDomElement domElement = domNode.toElement();
             if(!domElement.isNull()) {
                     domElement.setAttribute("id",QString::number(objectCounter));
-                    qDebug()<<objectCounter<<" "<<domElement.tagName();
+                    qDebug()<<domElement.tagName()<<domElement.attribute("id");
+
                     ++objectCounter;
             }
         }
