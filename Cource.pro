@@ -18,3 +18,6 @@ SOURCES += main.cpp\
         mainwindow.cpp
 
 HEADERS  += mainwindow.h
+
+OTHER_FILES += \
+    test.svg

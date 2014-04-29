@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     scene=new QGraphicsScene();
-    scene->setSceneRect(0,0,300,300);
+    scene->setSceneRect(0,0,700,700);
     view=new QGraphicsView(scene);
     centralHLayout=new QHBoxLayout;
     centralVLayout=new QVBoxLayout;
@@ -70,9 +70,23 @@ void MainWindow::openFile()
         int width=domElement.attribute("width").remove("px").toInt();
         qDebug()<<height<<width;
         scene->setSceneRect(0,0,height,width);
+        int counter=traverseNode(domElement);
+
+        QByteArray *bArray=new QByteArray;
+        *bArray=domDoc->toByteArray();
+        QBuffer *bufferFile=new QBuffer(bArray);
+        QSvgRenderer *renderer=new QSvgRenderer(*bArray);
+        for(int i=0;i<counter;++i)
+        {
+            qDebug()<<renderer->elementExists(QString::number(i));
+            QGraphicsSvgItem *tmp=new QGraphicsSvgItem;
+            tmp->setSharedRenderer(renderer);
+            tmp->setElementId(QString::number(i));
+            scene->addItem(tmp);
+        }
     }
 }
-void MainWindow::traverseNode(const QDomNode& node)
+int MainWindow::traverseNode(const QDomNode& node)
 {
     //is not ready yet
     int objectCounter=0;
@@ -80,12 +94,14 @@ void MainWindow::traverseNode(const QDomNode& node)
     while(!domNode.isNull()) {
         if(domNode.isElement()) {
             QDomElement domElement = domNode.toElement();
-            if(!domElement.isNull() && domElement.tagName()=="blablabla") {
-
-                domElement.setAttribute("id",QString::number(objectCounter));
+            if(!domElement.isNull()) {
+                    domElement.setAttribute("id",QString::number(objectCounter));
+                    qDebug()<<objectCounter<<" "<<domElement.tagName();
+                    ++objectCounter;
             }
         }
         traverseNode(domNode);
         domNode = domNode.nextSibling();
     }
+    return objectCounter;
 }

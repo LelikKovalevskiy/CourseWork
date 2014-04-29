@@ -12,6 +12,10 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QDebug>
+#include <QBuffer>
+#include <QSvgRenderer>
+#include <QByteArray>
+#include <QGraphicsSvgItem>
 
 class MainWindow : public QMainWindow
 {
@@ -27,7 +31,7 @@ public:
     QWidget *box;
     QDomDocument *domDoc;
 private:
-    void traverseNode(const QDomNode& node);
+    int traverseNode(const QDomNode& node);
 private slots:
     void openFile();
 };
