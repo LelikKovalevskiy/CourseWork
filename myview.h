@@ -9,9 +9,10 @@ class myView : public QGraphicsView
 public:
     myView( QGraphicsScene * scene, QWidget * parent = 0 ):QGraphicsView(scene,parent)
     {
-        setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+        setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Expanding);
     }
-    QSize sizeHint();
+
+    QSize sizeHint()const;
 
 signals:
 
