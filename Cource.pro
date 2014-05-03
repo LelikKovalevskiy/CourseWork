@@ -16,10 +16,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    myview.cpp
+    myview.cpp \
+    mycircle.cpp
 
 HEADERS  += mainwindow.h \
-    myview.h
+    myview.h \
+    mycircle.h
 
 OTHER_FILES += \
     test.svg

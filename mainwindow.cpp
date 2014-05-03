@@ -10,8 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     view=new myView(scene);
     centralHLayout=new QHBoxLayout;
     centralVLayout=new QVBoxLayout;
-
-   /* centralHLayout->addStretch();
+    centralHLayout->addStretch();
     centralHLayout->addWidget(view);
     centralHLayout->addStretch();
 
@@ -20,8 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
     centralVLayout->addStretch();
 
     box=new QWidget;
-    box->setLayout(centralVLayout);*/
-    setCentralWidget(view); //!!!
+    box->setLayout(centralVLayout);
+    setCentralWidget(box);
 
     QAction* pactNew = new QAction("New File", 0);
     pactNew->setText("&New");
@@ -68,46 +67,48 @@ void MainWindow::openFile()
         QDomElement domElement=domDoc->documentElement();
         int height=domElement.attribute("height").remove("px").toInt();
         int width=domElement.attribute("width").remove("px").toInt();
-        qDebug()<<height<<width;
+        int objectCounter=0;
         scene->setSceneRect(0,0,height,width);
-        int counter=traverseNode(domElement);
 
-        //view->setMaximumSize(height,width);
-
+        QVector<myCircle*>*itemVector=new QVector<myCircle*>;
+        traverseNode(domElement,itemVector,objectCounter);
+        qDebug()<<itemVector->size();
+        //view->setMaximumSize(height+2,width+2);
         bArray=new QByteArray(domDoc->toByteArray());
         bufferFile=new QBuffer(bArray);
-        renderer=new QSvgRenderer(*bArray);
-        for(int i=0;i<counter;++i)
+        renderer=new QSvgRenderer(bufferFile);
+
+        myCircle *tmp;
+        for(int i=0;i<itemVector->size();++i) //ВЫЛЕТАЕТ
         {
-            QGraphicsSvgItem *tmp=new QGraphicsSvgItem;
+            tmp=itemVector->at(i);
             tmp->setSharedRenderer(renderer);
-            tmp->setElementId(QString::number(i));
+            tmp->setElementId(tmp->getElementId());
             scene->addItem(tmp);
-            qDebug()<<tmp->scenePos();
             tmp->setFlag(QGraphicsSvgItem::ItemIsMovable);
-            tmp->setFlag(QGraphicsSvgItem::ItemIsSelectable);
-            tmp->setFlag(QGraphicsSvgItem::ItemIsFocusable);
+            tmp->setFlag(QGraphicsSvgItem::ItemIsSelectable);*/
+            qDebug()<<tmp->getElementId();
+
         }
-        qDebug()<<renderer->viewBox();
     }
 }
-int MainWindow::traverseNode(const QDomNode& node)
+void MainWindow::traverseNode(const QDomNode& node,QVector<myCircle*>*itemVector,int &objectCounter)
 {
     //is not ready yet
-    int objectCounter=0;
+
     QDomNode domNode = node.firstChild();
     while(!domNode.isNull()) {
         if(domNode.isElement()) {
             QDomElement domElement = domNode.toElement();
             if(!domElement.isNull()) {
                     domElement.setAttribute("id",QString::number(objectCounter));
-                    qDebug()<<domElement.tagName()<<domElement.attribute("id");
-
+                    //qDebug()<<domElement.tagName()<<domElement.attribute("id");
+                    itemVector->push_back(new myCircle(&domElement));
                     ++objectCounter;
             }
         }
-        traverseNode(domNode);
+        traverseNode(domNode,itemVector,objectCounter);
         domNode = domNode.nextSibling();
     }
-    return objectCounter;
+
 }

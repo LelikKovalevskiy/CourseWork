@@ -11,7 +11,7 @@ public:
     {
         setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     }
-    QSize sizeHint();
+    QSize sizeHint()const;
 
 signals:
 

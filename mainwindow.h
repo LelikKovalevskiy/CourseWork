@@ -17,6 +17,7 @@
 #include <QByteArray>
 #include <QGraphicsSvgItem>
 #include "myview.h"
+#include "mycircle.h"
 
 class MainWindow : public QMainWindow
 {
@@ -36,7 +37,7 @@ private:
     QBuffer *bufferFile;
     QSvgRenderer *renderer;
 
-    int traverseNode(const QDomNode& node);
+    void traverseNode(const QDomNode& node, QVector<myCircle*>*itemVector, int &objectCounter);
 private slots:
     void openFile();
 };
