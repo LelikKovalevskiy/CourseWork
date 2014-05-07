@@ -8,10 +8,14 @@ class myCircle : public QGraphicsSvgItem
 {
     Q_OBJECT
 public:
-     myCircle(QDomElement *domElement);
+     myCircle(QDomNode* domNode);
      QString getElementId();
+     void setPosAsInFile();
 private:
-     QDomElement *domElement;
+     QDomNode *domNode;
+protected:
+     void mouseReleaseEvent ( QGraphicsSceneMouseEvent * event );
+
 
 
 
