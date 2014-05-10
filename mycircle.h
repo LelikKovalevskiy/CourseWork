@@ -3,27 +3,20 @@
 
 #include <QGraphicsSvgItem>
 #include <QDomDocument>
+#include <QMenu>
+#include <QColor>
+#include <QColorDialog>
+#include <QPainter>
+#include "myshape.h"
 
-class myCircle : public QGraphicsSvgItem
+class myCircle : public myShape
 {
     Q_OBJECT
 public:
      myCircle(QDomNode* domNode);
-     QString getElementId();
      void setPosAsInFile();
-private:
-     QDomNode *domNode;
 protected:
-     void mouseReleaseEvent ( QGraphicsSceneMouseEvent * event );
-
-
-
-
-
-signals:
-
-public slots:
-
+     void mouseReleaseEvent( QGraphicsSceneMouseEvent * event );
 };
 
 #endif // MYCIRCLE_H

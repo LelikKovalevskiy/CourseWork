@@ -17,11 +17,18 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     myview.cpp \
-    mycircle.cpp
+    mycircle.cpp \
+    myshape.cpp \
+    myrect.cpp \
+    numberedbutton.cpp
 
 HEADERS  += mainwindow.h \
     myview.h \
-    mycircle.h
+    mycircle.h \
+    myshape.h \
+    myrect.h \
+    numberedbutton.h
 
 OTHER_FILES += \
-    ../build-Cource-Desktop_Qt_5_2_1_MinGW_32bit-Debug/test.svg
+    ../build-Cource-Desktop_Qt_5_2_1_MinGW_32bit-Debug/test.svg \
+    ../build-Cource-Desktop_Qt_5_2_1_MinGW_32bit-Debug/result.svg

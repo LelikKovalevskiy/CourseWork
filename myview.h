@@ -11,6 +11,7 @@ public:
     {
         setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     }
+    myView():QGraphicsView(){}
     QSize sizeHint()const;
 
 signals:

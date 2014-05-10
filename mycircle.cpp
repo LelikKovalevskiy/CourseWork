@@ -2,26 +2,22 @@
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 
-myCircle::myCircle(QDomNode *domNode):QGraphicsSvgItem(),domNode(domNode)
+
+myCircle::myCircle(QDomNode *domNode):myShape(domNode)
 {
 
 }
-QString myCircle::getElementId()
-{
-    return domNode->toElement().attribute("id");
-}
 void myCircle::setPosAsInFile()
 {
-    setPos(domNode->toElement().attribute("cx").toInt()-domNode->toElement().attribute("r").toInt(),
-           domNode->toElement().attribute("cy").toInt()-domNode->toElement().attribute("r").toInt());
+    setPos(getDomNode()->toElement().attribute("cx").toInt()-getDomNode()->toElement().attribute("r").toInt(),
+           getDomNode()->toElement().attribute("cy").toInt()-getDomNode()->toElement().attribute("r").toInt());
     qDebug()<<scenePos();
 }
 void myCircle::mouseReleaseEvent ( QGraphicsSceneMouseEvent * event )
 {
     qDebug()<<this->scenePos();
-    int r=domNode->toElement().attribute("r").toInt();
-    domNode->toElement().setAttribute("cx",pos().x()+r);
-    domNode->toElement().setAttribute("cy",pos().y()+r);
-    qDebug()<<"Current scene pos: "<<event->scenePos();
+    int r=getDomNode()->toElement().attribute("r").toInt();
+    getDomNode()->toElement().setAttribute("cx",pos().x()+r);
+    getDomNode()->toElement().setAttribute("cy",pos().y()+r);
     QGraphicsSvgItem::mouseReleaseEvent(event);
 }
