@@ -19,15 +19,13 @@ SOURCES += main.cpp\
     myview.cpp \
     mycircle.cpp \
     myshape.cpp \
-    myrect.cpp \
-    numberedbutton.cpp
+    myrect.cpp
 
 HEADERS  += mainwindow.h \
     myview.h \
     mycircle.h \
     myshape.h \
-    myrect.h \
-    numberedbutton.h
+    myrect.h
 
 OTHER_FILES += \
     ../build-Cource-Desktop_Qt_5_2_1_MinGW_32bit-Debug/test.svg \

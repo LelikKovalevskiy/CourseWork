@@ -21,7 +21,6 @@
 #include "myrect.h"
 #include <QVector>
 #include <QDockWidget>
-#include "numberedbutton.h"
 #include <QComboBox>
 #include <QLabel>
 #include <QSpinBox>
@@ -42,6 +41,7 @@ private:
     QWidget *box;
     QVector<QDomDocument *>*domDocs;
     QDomDocument* currentDomDoc;
+    QDomDocument* animatedDomDoc;
     QByteArray *bArray;
     QBuffer *bufferFile;
     QSvgRenderer *currentRenderer;
@@ -55,6 +55,7 @@ private:
 
     QVector<int> *timesBetweenFrames;
 
+    void animateShape(myShape* first, myShape* second, int numOfTheLastFrame);
 
     void traverseNode(const QDomNode& node, QVector<QDomNode*>*domNodeVector, int &objectCounter);
 private slots:
@@ -64,6 +65,7 @@ private slots:
     void addFrame();
     void setCurrentFrame(int num);
     void setTimeBetweenFrames(int time);
+    QDomDocument* animate();
 };
 
 #endif // MAINWINDOW_H

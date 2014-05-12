@@ -5,13 +5,13 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+
     view=new myView();
     centralHLayout=new QHBoxLayout;
     centralVLayout=new QVBoxLayout;
     centralHLayout->addStretch();
     centralHLayout->addWidget(view);
     centralHLayout->addStretch();
-
     centralVLayout->addStretch();
     centralVLayout->addLayout(centralHLayout);
     centralVLayout->addStretch();
@@ -20,32 +20,30 @@ MainWindow::MainWindow(QWidget *parent)
     box->setLayout(centralVLayout);
     setCentralWidget(view);
 
-    QAction* pactSave = new QAction("Save file", 0);
-    pactSave->setText("&Save file");
+    QAction* pactSave = new QAction("Save file",0);
+    pactSave->setText("&Save...");
     pactSave->setShortcut(QKeySequence("CTRL+N"));
-    pactSave->setToolTip("Save Document");
-    pactSave->setStatusTip("Save file");
-    pactSave->setWhatsThis("Save file");
     connect(pactSave,SIGNAL(triggered()),this,SLOT(saveFile()));
     //not connected yet
 
-    QAction* pactOpen = new QAction("Open File", 0);
+    QAction* pactOpen = new QAction("Open File",0);
     pactOpen->setText("&Open...");
     pactOpen->setShortcut(QKeySequence("CTRL+O"));
-    pactOpen->setToolTip("Open Document");
-    pactOpen->setStatusTip("Open an existing file");
-    pactOpen->setWhatsThis("Open an existing file");
     connect(pactOpen,SIGNAL(triggered()),this,SLOT(openFile()));
 
+    QAction* pactAnimate=new QAction("Generate animation",0);
+    pactAnimate->setText("&Generate...");
+    pactAnimate->setShortcut(QKeySequence("CTRL+G"));
+    connect(pactAnimate,SIGNAL(triggered()),this,SLOT(animate()));
 
-    QMenu* pmnuFile = new QMenu("&File");
-    pmnuFile->addAction(pactSave);
-    pmnuFile->addAction(pactOpen);
-    //not connected yet
-    menuBar()->addMenu(pmnuFile);
+    QMenu* fileMenu=new QMenu("&File");
+    QMenu* animationMenu=new QMenu("&Animation");
 
-
-
+    fileMenu->addAction(pactOpen);
+    fileMenu->addAction(pactSave);
+    animationMenu->addAction(pactAnimate);
+    menuBar()->addMenu(fileMenu);
+    menuBar()->addMenu(animationMenu);
 }
 
 MainWindow::~MainWindow()
@@ -104,7 +102,6 @@ void MainWindow::openFile()
             tmp->setFlag(QGraphicsSvgItem::ItemIsSelectable);
             tmp->setPosAsInFile();
         }
-        qDebug()<<currentDomDoc->toString();
 
         //создание кнопок, нумерующих "кадры"
 
@@ -140,6 +137,7 @@ void MainWindow::openFile()
         addDockWidget(Qt::TopDockWidgetArea,frameList);
         //
         timesBetweenFrames=new QVector<int>;
+        timesBetweenFrames->push_back(0);
 
 
     }
@@ -200,8 +198,6 @@ void MainWindow::addFrame()
     currentRenderer=new QSvgRenderer(*bArray);
     renderers->push_back(currentRenderer);
     frameBox->addItem("Frame №"+QString::number(scenes.size()));
-    qDebug("OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
 
     timesBetweenFrames->push_back(0);
     frameBox->setCurrentIndex(scenes.size()-1);
@@ -258,13 +254,82 @@ void MainWindow::setCurrentFrame(int num)
         constInfoLabel->setVisible(true);
         timeSetter->setVisible(true);
     }
-    if(num>0)
-        timeSetter->setValue(timesBetweenFrames->at(num-1));
+    timeSetter->setValue(timesBetweenFrames->at(num));
 
 }
 void MainWindow::setTimeBetweenFrames(int time)
 {
     if(frameBox->currentIndex()>0)
-        timesBetweenFrames->replace(frameBox->currentIndex()-1,time);
-    qDebug()<<*timesBetweenFrames;
+        timesBetweenFrames->replace(frameBox->currentIndex(),time);
+}
+//is being developed now
+void MainWindow::animateShape(myShape *first, myShape *second,int numOfTheLastFrame)
+{
+    int begin=0;
+    for(int i=0;i<numOfTheLastFrame;++i)
+        begin+=timesBetweenFrames->at(i);
+    QDomElement tmp;
+    if(first->getDomNode()->toElement().tagName()=="circle") //animateMotion!!! not animate
+    {
+        if(first->getDomNode()->toElement().attribute("cx")!=second->getDomNode()->toElement().attribute("cx")||
+                first->getDomNode()->toElement().attribute("cy")!=second->getDomNode()->toElement().attribute("cy"))
+        {
+
+            tmp=animatedDomDoc->createElement("animateMotion");
+
+            tmp.setTagName("animateMotion");
+            tmp.setAttribute("xlink:href","#"+first->getDomNode()->toElement().attribute("id"));
+            tmp.setAttribute("attributeType","XML");
+            tmp.setAttribute("values",first->getDomNode()->toElement().attribute("cx")+
+                             ","+first->getDomNode()->toElement().attribute("cy")+
+                             ";"+second->getDomNode()->toElement().attribute("cx")+
+                             ","+second->getDomNode()->toElement().attribute("cy"));
+
+            tmp.setAttribute("begin",QString::number(begin)+"s");
+            tmp.setAttribute("dur",QString::number(timesBetweenFrames->at(numOfTheLastFrame))+"s");
+            animatedDomDoc->documentElement().appendChild(tmp);
+        }
+
+    }
+    else if(first->getDomNode()->toElement().tagName()=="rect")
+    {
+        if(first->getDomNode()->toElement().attribute("x")!=second->getDomNode()->toElement().attribute("x") ||
+                first->getDomNode()->toElement().attribute("y")!=second->getDomNode()->toElement().attribute("y") )
+        {
+            tmp=animatedDomDoc->createElement("animateMotion");
+
+            tmp.setAttribute("xlink:href","#"+first->getDomNode()->toElement().attribute("id"));
+            tmp.setAttribute("attributeType","XML");
+            tmp.setAttribute("values",first->getDomNode()->toElement().attribute("x")+
+                             ","+first->getDomNode()->toElement().attribute("y")+
+                             ";"+second->getDomNode()->toElement().attribute("x")+
+                             ","+second->getDomNode()->toElement().attribute("y"));
+
+            tmp.setAttribute("begin",QString::number(begin)+"s");
+            tmp.setAttribute("dur",QString::number(timesBetweenFrames->at(numOfTheLastFrame))+"s");
+            animatedDomDoc->documentElement().appendChild(tmp);
+
+        }
+
+    }
+}
+
+QDomDocument* MainWindow::animate()
+{
+    animatedDomDoc=new QDomDocument;
+    animatedDomDoc->setContent(domDocs->at(0)->toByteArray());
+
+    QVector<QList<QGraphicsItem*> > listsOfItems;
+    for(int i=0;i<scenes.size();++i)
+    {
+        listsOfItems.push_back(scenes.at(i)->items());
+    }
+    for(int i=0;i<listsOfItems.at(0).size();++i)
+    {
+        for(int j=0;j<listsOfItems.size()-1;++j)
+        {
+            animateShape((myShape*)listsOfItems.at(j).at(i),(myShape*)listsOfItems.at(j+1).at(i),j+1);
+        }
+    }
+    qDebug()<<animatedDomDoc->toByteArray();
 }
